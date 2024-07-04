@@ -13,11 +13,11 @@ python wfc.py tileset.json
 ![example output](screenshot.png)
 
 ### File Layout
-tiles - a list of strings for each tile
-input_tiles - a 2D array containing the example tile set
-format - a boolean indicating wether or not to append "\x1b[" + TILE_STRING + "\x1b[0m"
-width - integer describing the output width
-height - integer describing the output height
+- tiles - a list of strings for each tile
+- input_tiles - a 2D array containing the example tile set
+- format - a boolean indicating wether or not to append "\x1b[" + TILE_STRING + "\x1b[0m"
+- width - integer describing the output width
+- height - integer describing the output height
 
 Example:
 ``` JSON

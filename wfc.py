@@ -1,6 +1,7 @@
 import math
 import random
 import json
+import sys
 
 class Pos():
     def __init__(self, x, y):
@@ -13,7 +14,7 @@ class Pos():
 class Tile():
     def __init__(self, id, string, sockets):
         self.id = id
-        self.string = "\x1b[" + string + "\x1b[0m"
+        self.string = string
         self.sockets = sockets
 
     def __str__(self): return self.string
@@ -74,7 +75,6 @@ class Map():
             if min_possibilities == 0: tileset_error()
             if min_possibilities == math.inf: break
 
-            
     def propagate(self, pos, hard):
         if self.get_tile(pos) != 0: return
         if not self.check_bounds(pos): return
@@ -123,7 +123,7 @@ def parse_input(input):
     tiles = input["tiles"]
     input_tiles = input["input_tiles"]
     parsed_tiles = []
-    for i in range(len(tiles)): parsed_tiles.append(Tile(i, tiles[i], [[], [], [], []]))
+    for i in range(len(tiles)): parsed_tiles.append(Tile(i, "\x1b[" + tiles[i] + "\x1b[0m" if input["format"] else tiles[i], [[], [], [], []]))
     
     socket_count = 0
     input_tiles_width = len(input_tiles[0]) - 1
@@ -145,21 +145,27 @@ def parse_input(input):
                 socket_count += 1
 
 
-    return parsed_tiles, input["input_tiles"]
+    return parsed_tiles
 
 def parse_file(input_file):
     try: file = open(input_file, "r")
     except: input_file_error()
     input = json.load(file)
 
-    return parse_input(input)
+    return parse_input(input), input["width"], input["height"]
     
-def main():
-    tiles, example_set = parse_file("tileset.json")
-    map = Map(tiles, 50, 50)
-    map.print_tiles()
+def main(file):
+    tiles, width, height = parse_file(file)
+    map = Map(tiles, width, height)
     map.generate()
     map.print_map()
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) == 1:
+        print("Invalid arguments, please pass file name.")
+        print("Usage: python wfc.py filename format")
+        exit()
+    elif len(sys.argv) == 2:
+        filename = sys.argv[1]
+        main(filename)
+    

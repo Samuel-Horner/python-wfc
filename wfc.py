@@ -163,7 +163,7 @@ def main(file):
 if __name__ == "__main__":
     if len(sys.argv) == 1:
         print("Invalid arguments, please pass file name.")
-        print("Usage: python wfc.py filename format")
+        print("Usage: python wfc.py filename")
         exit()
     elif len(sys.argv) == 2:
         filename = sys.argv[1]

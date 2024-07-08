@@ -1,7 +1,8 @@
 import math
 import random
-import json
-import sys
+
+class TileSetError(Exception):
+    pass
 
 class Pos():
     def __init__(self, x, y):
@@ -12,13 +13,10 @@ class Pos():
         return Pos(self.x + other.x, self.y + other.y)
 
 class Tile():
-    def __init__(self, id, string, sockets):
+    def __init__(self, id,):
         self.id = id
-        self.string = string
-        self.sockets = sockets
+        self.sockets = [[], [], [], []]
 
-    def __str__(self): return self.string
-    
     def up(self): return self.sockets[0]
     def right(self): return self.sockets[1]
     def down(self): return self.sockets[2]
@@ -72,7 +70,7 @@ class Map():
                         min_possibilities = possibilities
                         min_possibilities_pos = pos
 
-            if min_possibilities == 0: tileset_error()
+            if min_possibilities == 0: raise TileSetError()
             if min_possibilities == math.inf: break
 
     def propagate(self, pos, hard):
@@ -80,7 +78,7 @@ class Map():
         if not self.check_bounds(pos): return
 
         possibilities = self.get_possibilities(pos)
-        if len(possibilities) == 0: tileset_error()
+        if len(possibilities) == 0: raise TileSetError()
         if len(possibilities) == 1: self.set_tile(pos, possibilities[0])
         if hard: self.set_tile(pos, random.choice(possibilities))
 
@@ -102,70 +100,33 @@ class Map():
             if e: possibilities.append(i + 1)    
     
         return possibilities
+    
+def generate_tileset(tiles, example_set):
+    socket_count = 0
+    example_set_width = len(example_set[0]) - 1
+    example_set_height = len(example_set) - 1
 
-    def print_map(self):
-        for i in range(self.height):
-            for j in range(self.width):
-                tile = self.map[i][j]
-                if (tile == 0): print("-", end=" ")
-                else: print(self.tileset[tile - 1], end=" ")
-            print()
+    for y in range(example_set_height):
+        for x in range(example_set_width):
+            center_tile = example_set[y][x] - 1
+            right_tile = example_set[y][x + 1] - 1
+            down_tile = example_set[y + 1][x] - 1
+            
+            if not [i for i in tiles[center_tile].right() if i in tiles[right_tile].left()]:
+                tiles[center_tile].add_right(socket_count)
+                tiles[right_tile].add_left(socket_count)
+                socket_count += 1
 
-def tileset_error():
-    print("Invalid tileset - locked tile reached")
-    exit()
-
-def input_file_error():
-    print("Invalid input file")
-    exit()
+            if not [i for i in tiles[center_tile].down() if i in tiles[down_tile].up()]:
+                tiles[center_tile].add_down(socket_count)
+                tiles[down_tile].add_up(socket_count)
+                socket_count += 1
+    
+    return tiles
 
 def parse_input(input):
-    tiles = input["tiles"]
-    input_tiles = input["input_tiles"]
-    parsed_tiles = []
-    for i in range(len(tiles)): parsed_tiles.append(Tile(i, "\x1b[" + tiles[i] + "\x1b[0m" if input["format"] else tiles[i], [[], [], [], []]))
-    
-    socket_count = 0
-    input_tiles_width = len(input_tiles[0]) - 1
-    input_tiles_height = len(input_tiles) - 1
-    for y in range(input_tiles_height):
-        for x in range(input_tiles_width):
-            center_tile = input_tiles[y][x] - 1
-            right_tile = input_tiles[y][x + 1] - 1
-            down_tile = input_tiles[y + 1][x] - 1
-            
-            if not [i for i in parsed_tiles[center_tile].right() if i in parsed_tiles[right_tile].left()]:
-                parsed_tiles[center_tile].add_right(socket_count)
-                parsed_tiles[right_tile].add_left(socket_count)
-                socket_count += 1
-
-            if not [i for i in parsed_tiles[center_tile].down() if i in parsed_tiles[down_tile].up()]:
-                parsed_tiles[center_tile].add_down(socket_count)
-                parsed_tiles[down_tile].add_up(socket_count)
-                socket_count += 1
-
-
-    return parsed_tiles
-
-def parse_file(input_file):
-    try: file = open(input_file, "r")
-    except: input_file_error()
-    input = json.load(file)
-
-    return parse_input(input), input["width"], input["height"]
-    
-def main(file):
-    tiles, width, height = parse_file(file)
-    map = Map(tiles, width, height)
-    map.generate()
-    map.print_map()
-
-if __name__ == "__main__":
-    if len(sys.argv) == 1:
-        print("Invalid arguments, please pass file name.")
-        print("Usage: python wfc.py filename format")
-        exit()
-    elif len(sys.argv) == 2:
-        filename = sys.argv[1]
-        main(filename)
-    
+    example_set = input["input_tiles"]
+    max_tile_id = max(map(max, example_set))
+    tiles = [Tile(i) for i in range(max_tile_id)]
+    tiles = generate_tileset(tiles, example_set)
+    return tiles

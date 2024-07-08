@@ -49,11 +49,12 @@ class Map():
         return self.map[pos.y][pos.x] if self.check_bounds(pos) else 0
     def set_tile(self, pos, tile): self.map[pos.y][pos.x] = tile
 
-    def generate(self):
+    def generate(self, pass_callback=None, tile_identifiers=None):
         min_possibilities_pos = Pos(random.randint(0, self.width - 1), random.randint(0, self.height - 1))
         self.propagation_stack = []
         while True:
             self.propagate(min_possibilities_pos, True)
+            if pass_callback: pass_callback(self, tile_identifiers)
 
             self.propagation_stack = []
             while len(self.propagation_stack) > 0:

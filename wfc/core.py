@@ -69,7 +69,6 @@ class Map():
                 self.propagate(self.propagation_stack.pop(), fast)
                 if fast:
                     if pass_callback: pass_callback(self, tile_identifiers)
-                    print(len(self.propagation_stack))
 
             if fast: break
 

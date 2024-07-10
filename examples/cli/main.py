@@ -49,14 +49,16 @@ def animate_map(map, tile_strings):
 def main(file, animate = False, width=None, height=None, fast=False):
     tiles, tile_strings, width, height = parse_file(file, width, height)
     map = wfc.Map(tiles, width, height)
-    for i in map.tileset: print(i.sockets)
-    # try: 
-    #     if animate: map.generate(fast, animate_map, tile_strings)
-    #     else: map.generate(fast)
-    # except wfc.TileSetError:
-    #     print_map(map, tile_strings) 
-    #     tileset_error()
-    # if not animate: print_map(map, tile_strings)
+    # for i in map.tileset: print(i.sockets)
+    try: 
+        if animate: map.generate(fast, animate_map, tile_strings)
+        else: map.generate(fast)
+    except wfc.TileSetError:
+        print_map(map, tile_strings)
+        if fast:
+            print("Hint: try disabling fast mode")
+        tileset_error()
+    if not animate: print_map(map, tile_strings)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

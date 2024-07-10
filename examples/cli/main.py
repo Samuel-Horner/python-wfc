@@ -46,16 +46,17 @@ def animate_map(map, tile_strings):
         print()
     sleep(0.005)
     
-def main(file, animate = False, width=None, height=None):
+def main(file, animate = False, width=None, height=None, fast=False):
     tiles, tile_strings, width, height = parse_file(file, width, height)
     map = wfc.Map(tiles, width, height)
-    try: 
-        if animate: map.generate(animate_map, tile_strings)
-        else: map.generate()
-    except wfc.TileSetError:
-        print_map(map, tile_strings) 
-        tileset_error()
-    if not animate: print_map(map, tile_strings)
+    for i in map.tileset: print(i.sockets)
+    # try: 
+    #     if animate: map.generate(fast, animate_map, tile_strings)
+    #     else: map.generate(fast)
+    # except wfc.TileSetError:
+    #     print_map(map, tile_strings) 
+    #     tileset_error()
+    # if not animate: print_map(map, tile_strings)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -63,8 +64,9 @@ if __name__ == "__main__":
     parser.add_argument("-a", "--animate", help="Whether or not to animate the generation process.", action="store_true")
     parser.add_argument("-x", "--width", type=int, help="Overides the width set in the input file.")
     parser.add_argument("-y", "--height", type=int, help="Overides the height set in the input file.")
+    parser.add_argument("-f", "--fast", help="Use a faster, less robust algorithm. REQUIRES wildcard tiles (see example tileset 3).", action="store_true")
 
     args = parser.parse_args()
 
     filename = args.file
-    main(filename, True if args.animate else False, args.width if args.width else None, args.height if args.height else None)
+    main(filename, True if args.animate else False, args.width if args.width else None, args.height if args.height else None, True if args.fast else False)

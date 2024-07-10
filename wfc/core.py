@@ -57,7 +57,7 @@ class Map():
         return self.map[pos.y][pos.x].visited if self.check_bounds(pos) else True
     def set_visited(self, pos, state): self.map[pos.y][pos.x].visited = state
 
-    def generate(self, pass_callback=None, tile_identifiers=None):
+    def generate(self, fast=False, pass_callback=None, tile_identifiers=None):
         min_possibilities_pos = Pos(random.randint(0, self.width - 1), random.randint(0, self.height - 1))
         self.propagation_stack = []
         while True:
@@ -66,7 +66,12 @@ class Map():
             if pass_callback: pass_callback(self, tile_identifiers)
 
             while len(self.propagation_stack) > 0:
-                self.propagate(self.propagation_stack.pop(), False)
+                self.propagate(self.propagation_stack.pop(), fast)
+                if fast:
+                    if pass_callback: pass_callback(self, tile_identifiers)
+                    print(len(self.propagation_stack))
+
+            if fast: break
 
             min_possibilities = math.inf
             min_possibilities_pos = Pos(-1,-1)
@@ -94,6 +99,7 @@ class Map():
         if len(possibilities) == 1: self.set_tile(pos, possibilities[0])
         if hard: self.set_tile(pos, random.choice(possibilities))
 
+        random.shuffle(Map.offsets)
         for e in Map.offsets:
             neighbour = pos + e
             self.propagation_stack.append(neighbour)
@@ -115,24 +121,30 @@ class Map():
     
 def generate_tileset(tiles, example_set):
     socket_count = 0
-    example_set_width = len(example_set[0]) - 1
-    example_set_height = len(example_set) - 1
+    example_set_width = len(example_set[0])
+    example_set_height = len(example_set)
 
     for y in range(example_set_height):
         for x in range(example_set_width):
             center_tile = example_set[y][x] - 1
-            right_tile = example_set[y][x + 1] - 1
-            down_tile = example_set[y + 1][x] - 1
-            
-            if not [i for i in tiles[center_tile].right() if i in tiles[right_tile].left()]:
-                tiles[center_tile].add_right(socket_count)
-                tiles[right_tile].add_left(socket_count)
-                socket_count += 1
 
-            if not [i for i in tiles[center_tile].down() if i in tiles[down_tile].up()]:
-                tiles[center_tile].add_down(socket_count)
-                tiles[down_tile].add_up(socket_count)
-                socket_count += 1
+            if x < example_set_width - 1:
+
+                right_tile = example_set[y][x + 1] - 1
+
+                if not [i for i in tiles[center_tile].right() if i in tiles[right_tile].left()]:
+                    tiles[center_tile].add_right(socket_count)
+                    tiles[right_tile].add_left(socket_count)
+                    socket_count += 1
+
+            if y < example_set_height - 1:
+
+                down_tile = example_set[y + 1][x] - 1
+    
+                if not [i for i in tiles[center_tile].down() if i in tiles[down_tile].up()]:
+                    tiles[center_tile].add_down(socket_count)
+                    tiles[down_tile].add_up(socket_count)
+                    socket_count += 1
     
     return tiles
 

@@ -12,6 +12,9 @@ class Pos():
     def __add__(self, other):
         return Pos(self.x + other.x, self.y + other.y)
 
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+
 class Tile():
     def __init__(self, id,):
         self.id = id
@@ -27,6 +30,11 @@ class Tile():
     def add_down(self, x): self.sockets[2].append(x)
     def add_left(self, x): self.sockets[3].append(x)
 
+class Cell():
+    def __init__(self):
+        self.id = 0
+        self.visited = False
+
 class Map():
     offsets = [Pos(0, -1), Pos(1, 0), Pos(0, 1), Pos(-1, 0)]
     # sockets = [up, right, down, left]
@@ -35,28 +43,28 @@ class Map():
     def __init__(self, tileset, width, height):
         self.tileset = tileset
         self.num_tiles = len(tileset)
-        self.map = [[0 for i in range(width)] for j in range(height)]
+        self.map = [[Cell() for i in range(width)] for j in range(height)]
         self.width = width
         self.height = height
-
-    def print_tiles(self):
-        for i in self.tileset: print(i, i.up(), i.right(), i.down(), i.left())
 
     def check_bounds(self, pos):
         if pos.x >= self.width or pos.x < 0 or pos.y >= self.height or pos.y < 0: return False
         return True
     def get_tile(self, pos):
-        return self.map[pos.y][pos.x] if self.check_bounds(pos) else 0
-    def set_tile(self, pos, tile): self.map[pos.y][pos.x] = tile
+        return self.map[pos.y][pos.x].id if self.check_bounds(pos) else 0
+    def set_tile(self, pos, tile): self.map[pos.y][pos.x].id = tile
+    def get_visited(self, pos):
+        return self.map[pos.y][pos.x].visited if self.check_bounds(pos) else True
+    def set_visited(self, pos, state): self.map[pos.y][pos.x].visited = state
 
     def generate(self, pass_callback=None, tile_identifiers=None):
         min_possibilities_pos = Pos(random.randint(0, self.width - 1), random.randint(0, self.height - 1))
         self.propagation_stack = []
         while True:
             self.propagate(min_possibilities_pos, True)
+            
             if pass_callback: pass_callback(self, tile_identifiers)
 
-            self.propagation_stack = []
             while len(self.propagation_stack) > 0:
                 self.propagate(self.propagation_stack.pop(), False)
 
@@ -65,6 +73,7 @@ class Map():
             for y in range(self.height):
                 for x in range(self.width):
                     pos = Pos(x, y)
+                    self.set_visited(pos, False)
                     if self.get_tile(pos) != 0: continue
                     possibilities = len(self.get_possibilities(pos))
                     if possibilities < min_possibilities:
@@ -77,6 +86,8 @@ class Map():
     def propagate(self, pos, hard):
         if self.get_tile(pos) != 0: return
         if not self.check_bounds(pos): return
+        if self.get_visited(pos): return
+        self.set_visited(pos, True)
 
         possibilities = self.get_possibilities(pos)
         if len(possibilities) == 0: raise TileSetError()

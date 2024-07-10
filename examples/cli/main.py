@@ -31,7 +31,7 @@ def parse_file(input_file, width=None, height=None):
 def print_map(map, tile_strings):
     for i in range(map.height):
         for j in range(map.width):
-            tile = map.map[i][j]
+            tile = map.map[i][j].id
             if (tile == 0): print("-", end=" ")
             else: print(tile_strings[tile - 1], end=" ")
         print()
@@ -40,7 +40,7 @@ def animate_map(map, tile_strings):
     print("\x1b[H\x1b[0J")
     for i in range(map.height):
         for j in range(map.width):
-            tile = map.map[i][j]
+            tile = map.map[i][j].id
             if (tile == 0): print("-", end=" ")
             else: print(tile_strings[tile - 1], end=" ")
         print()

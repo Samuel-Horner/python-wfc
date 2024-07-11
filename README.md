@@ -9,11 +9,7 @@ Please see the docs [here](https://samuel-horner.github.io/python-wfc/)
 ## Examples
 
 ### Usage
-See wfc/examples/cli
-
-```
-python  filename
-```
+See wfc/examples for a prebuilt cli. 
 Example:
 ```
 python -m wfc.examples.cli wfc/examples/tileset1.json

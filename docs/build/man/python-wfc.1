@@ -1,0 +1,401 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "PYTHON-WFC" "1" "Jul 11, 2024" "" "python-wfc"
+.SH NAME
+python-wfc \- python-wfc 
+.INDENT 0.0
+.IP \(bu 2
+\fI\%Index\fP
+.IP \(bu 2
+\fI\%Module Index\fP
+.IP \(bu 2
+\fI\%Search Page\fP
+.UNINDENT
+.sp
+\fBpython\-wfc\fP
+This is a python library implementing the core of the wave function collapse algorithm.
+.sp
+wfc.core
+Contains all the neccesary framework to setup and run the wfc algorithm.
+.sp
+Classes:
+.INDENT 0.0
+.INDENT 3.5
+.INDENT 0.0
+.IP \(bu 2
+TileSetError(Exception)
+.IP \(bu 2
+Pos
+.IP \(bu 2
+Tile
+.IP \(bu 2
+Cell
+.IP \(bu 2
+Map
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+Functions:
+.INDENT 0.0
+.INDENT 3.5
+.INDENT 0.0
+.IP \(bu 2
+generate_tileset
+.IP \(bu 2
+parse_input
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBclasses\fP
+.INDENT 0.0
+.TP
+.B exception wfc.core.TileSetError
+Class to define a TileSetError, i.e. a tile with 0 possibilities
+.UNINDENT
+.INDENT 0.0
+.TP
+.B class wfc.core.Pos(x: int = 0, y: int = 0)
+A Class containing an x and y position
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBx\fP (\fIint\fP\fI, \fP\fIoptional\fP) – X component, defaults to 0
+.IP \(bu 2
+\fBy\fP (\fIint\fP\fI, \fP\fIoptional\fP) – Y component, defaults to 0
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B class wfc.core.Tile(id: int)
+Class containing tile id and sockets
+.INDENT 7.0
+.TP
+.B Parameters
+\fBid\fP (\fIint\fP) – Integer tile id (!= 0)
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B class wfc.core.Cell
+Class containing an id and a boolean visited flag
+.UNINDENT
+.INDENT 0.0
+.TP
+.B class wfc.core.Map(tileset: list[\fI\%Tile\fP], width: int, height: int)
+Class containing the actual grid with generation and propagation methods
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBtileset\fP (\fIlist\fP\fI[\fP\fI\%Tile\fP\fI]\fP) – The tile set to be used
+.IP \(bu 2
+\fBwidth\fP (\fIint\fP) – The map width
+.IP \(bu 2
+\fBheight\fP (\fIint\fP) – The map height
+.UNINDENT
+.TP
+.B Raises
+.INDENT 7.0
+.IP \(bu 2
+\fI\%TileSetError\fP – Invalid tile set (0 possibilities)
+.IP \(bu 2
+\fI\%TileSetError\fP – Invalid tile set (0 possibilities)
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B check_bounds(pos: \fI\%Pos\fP) -> bool
+Checks if a given position is in bounds
+.INDENT 7.0
+.TP
+.B Parameters
+\fBpos\fP (\fI\%Pos\fP) – Possition to check
+.TP
+.B Returns
+Whether or not the position is in bounds
+.TP
+.B Return type
+bool
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B generate(fast: bool = False, pass_callback: callable = None, tile_identifiers: list[str] = None) -> None
+Performs the wave function collapse on the map
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBfast\fP (\fIbool\fP\fI, \fP\fIoptional\fP) – Whether or not to use the fast algorithm, defaults to False
+.IP \(bu 2
+\fBpass_callback\fP (\fIcallable\fP\fI, \fP\fIoptional\fP) – The callback called after every pass, with :param tile_identifiers: and self passed in, defaults to None
+.IP \(bu 2
+\fBtile_identifiers\fP (\fIlist\fP\fI[\fP\fIstr\fP\fI]\fP\fI, \fP\fIoptional\fP) – The list of tile strings passed to :param pass_callback:, defaults to None
+.UNINDENT
+.TP
+.B Raises
+\fI\%TileSetError\fP – Invalid tile set reached, 0 possibilities
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B get_possibilities(pos: \fI\%Pos\fP) -> list[int]
+Returns a list of possible tile IDs at pos
+.INDENT 7.0
+.TP
+.B Parameters
+\fBpos\fP (\fI\%Pos\fP) – The position to check
+.TP
+.B Returns
+A list of possible tile IDs
+.TP
+.B Return type
+list[int]
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B get_tile(pos: \fI\%Pos\fP) -> int
+Gets cell ID at a given position, if out of bounds returns 0
+.INDENT 7.0
+.TP
+.B Parameters
+\fBpos\fP (\fI\%Pos\fP) – The given position
+.TP
+.B Returns
+The cell ID
+.TP
+.B Return type
+int
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B get_visited(pos: \fI\%Pos\fP) -> bool
+Returns the visited flag of a cell, if out of bounds returns True
+.INDENT 7.0
+.TP
+.B Parameters
+\fBpos\fP (\fI\%Pos\fP) – The cell’s position
+.TP
+.B Returns
+The visited flag of the cell
+.TP
+.B Return type
+bool
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B mirror = [2, 3, 0, 1]
+Mirror indexes used to query sockets
+.UNINDENT
+.INDENT 7.0
+.TP
+.B offsets = [<wfc.core.Pos object>, <wfc.core.Pos object>, <wfc.core.Pos object>, <wfc.core.Pos object>]
+A list of offsets used when finding neighbours
+.UNINDENT
+.INDENT 7.0
+.TP
+.B propagate(pos: \fI\%Pos\fP, hard: bool) -> None
+Propagates a change
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBpos\fP (\fI\%Pos\fP) – The posistion to propagate
+.IP \(bu 2
+\fBhard\fP (\fIbool\fP) – Whether or not to forcefully select a random possible tile
+.UNINDENT
+.TP
+.B Raises
+\fI\%TileSetError\fP – Invalid tile set, 0 possibilities reached
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B set_tile(pos: \fI\%Pos\fP, tile: int) -> None
+Sets the ID of a cell
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBpos\fP (\fI\%Pos\fP) – The position of the cell
+.IP \(bu 2
+\fBtile\fP (\fIint\fP) – The id to set
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B set_visited(pos: \fI\%Pos\fP, state: bool) -> None
+Sets the visited flag of a cell
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBpos\fP (\fI\%Pos\fP) – The cell’s position
+.IP \(bu 2
+\fBstate\fP (\fIbool\fP) – The state to set the flag to
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBfunctions\fP
+.INDENT 0.0
+.TP
+.B wfc.core.generate_tileset(tiles: list[\fI\%Tile\fP], example_set: list[list[int]]) -> list[\fI\%Tile\fP]
+Calculates sockets based on the example set and applies them to the given tile set
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBtiles\fP (\fIlist\fP\fI[\fP\fI\%Tile\fP\fI]\fP) – The given set of tiles
+.IP \(bu 2
+\fBexample_set\fP (\fIlist\fP\fI[\fP\fIlist\fP\fI[\fP\fIint\fP\fI]\fP\fI]\fP) – The example tile set
+.UNINDENT
+.TP
+.B Returns
+The modified set of tiles with sockets calculated
+.TP
+.B Return type
+list[\fI\%Tile\fP]
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B wfc.core.parse_input(input: dict) -> list[\fI\%Tile\fP]
+Creates a list of tiles from a JSON input containing an example set
+.INDENT 7.0
+.TP
+.B Parameters
+\fBinput\fP (\fIdict\fP) – The JSON input, containing “input_tiles” (the example set)
+.TP
+.B Returns
+A list of tiles with sockets
+.TP
+.B Return type
+list[\fI\%Tile\fP]
+.UNINDENT
+.UNINDENT
+.sp
+\fBfunctions\fP
+.INDENT 0.0
+.TP
+.B wfc.examples.cli.main(file: str, animate: bool = False, width: int = None, height: int = None, fast: bool = False) -> None
+The CLI entrypoint
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBfile\fP (\fIstr\fP) – The input file
+.IP \(bu 2
+\fBanimate\fP (\fIbool\fP\fI, \fP\fIoptional\fP) – Boolean describing wether or not to animate the generation, defaults to False
+.IP \(bu 2
+\fBwidth\fP (\fIint\fP\fI, \fP\fIoptional\fP) – The output width override, defaults to None
+.IP \(bu 2
+\fBheight\fP (\fIint\fP\fI, \fP\fIoptional\fP) – The output height override, defaults to None
+.IP \(bu 2
+\fBfast\fP (\fIbool\fP\fI, \fP\fIoptional\fP) – Boolean describing wether or not to use the faster, less stable algorithm, defaults to False
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B wfc.examples.cli.animate_map(map: \fI\%Map\fP, tile_strings: list[str]) -> None
+Map animation callback
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBmap\fP (\fIwfc.Map\fP) – The map object
+.IP \(bu 2
+\fBtile_strings\fP (\fIlist\fP\fI[\fP\fIstr\fP\fI]\fP) – The list of strings each tile represents
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B wfc.examples.cli.print_map(map: \fI\%Map\fP, tile_strings: list[str]) -> None
+Prints the state of the map
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBmap\fP (\fIwfc.Map\fP) – The map object
+.IP \(bu 2
+\fBtile_strings\fP (\fIlist\fP\fI[\fP\fIstr\fP\fI]\fP) – The list of strings each tile represents
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B wfc.examples.cli.parse_file(input_file: str, width: int = None, height: int = None) -> tuple[list[\fI\%Tile\fP], list[str], int, int] | Exception
+Parses the input file
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBinput_file\fP (\fIstr\fP) – The file to parse
+.IP \(bu 2
+\fBwidth\fP (\fIint\fP\fI, \fP\fIoptional\fP) – The output width override, defaults to None
+.IP \(bu 2
+\fBheight\fP (\fIint\fP\fI, \fP\fIoptional\fP) – The ouput height override, defaults to None
+.UNINDENT
+.TP
+.B Returns
+A tuple containing a list of wfc.Tile objects, a list of the strings they represent, and the desired width & height of the output
+.TP
+.B Return type
+tuple[list[wfc.Tile], list[str], int, int]
+.UNINDENT
+.UNINDENT
+.SH AUTHOR
+Samuel Horner
+.SH COPYRIGHT
+2024, Samuel Horner
+.\" Generated by docutils manpage writer.
+.

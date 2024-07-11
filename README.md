@@ -2,17 +2,21 @@
 An implementation of the wave function collapse algorithm.
 See [here](wfc/core.py) for the core implementation.
 
+## Documentation
+
+Please see the docs at docs/build/html/index.html
+
 ## Examples
 
 ### Usage
-See examples/cli
+See wfc/examples/cli
 
 ```
-python examples/cli/main.py filename
+python  filename
 ```
 Example:
 ```
-python examples/cli/main.py examples/cli/tileset1.json
+python -m wfc.examples.cli wfc/examples/tileset1.json
 ```
 ### Example Output:
 ![example output](screenshot.png)

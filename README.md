@@ -4,7 +4,7 @@ See [here](wfc/core.py) for the core implementation.
 
 ## Documentation
 
-Please see the docs at docs/build/html/index.html
+Please see the docs [here](https://samuel-horner.github.io/python-wfc/)
 
 ## Examples
 
